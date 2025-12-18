@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c13baef9cab17c643a79e96cad5ea942, type: 3}
+  m_Name: Cuchillo
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDataSO
+  ID: CuchilloID
+  Name: Cuchillo
+  Description: Pa cortar
+  Icon: {fileID: 21300000, guid: 8d1e09a27aba23c489f3c0d5e1eb72a3, type: 3}
+  Type: 2
+  IsStackable: 0
+  MaxStackSize: 99
+  Damage: 15
+  AttackRate: 1
+  Range: 1
+  ProjectilePrefab: {fileID: 0}
+  IsMelee: 1
