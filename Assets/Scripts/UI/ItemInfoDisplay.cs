@@ -12,6 +12,7 @@ public class ItemInfoDisplay : MonoBehaviour
     public TextMeshProUGUI itemNameText;
     public TextMeshProUGUI itemDescriptionText;
     public Button splitButton;
+    public Button discardButton;
 
     [Header("Configuración")]
     public Vector2 offset = new Vector2(10f, 10f);
@@ -74,6 +75,12 @@ public class ItemInfoDisplay : MonoBehaviour
             splitButton.onClick.AddListener(OnSplitButtonClicked);
             Debug.Log("ItemInfoDisplay: Botón dividir conectado");
         }
+        if (discardButton != null)
+        {
+            discardButton.onClick.AddListener(OnDiscardButtonClicked);
+            Debug.Log("ItemInfoDisplay: Botón descartar conectado");
+        }
+
 
         Debug.Log($"ItemInfoDisplay: Referencias - Panel: {panelObject != null}, Name: {itemNameText != null}, Desc: {itemDescriptionText != null}");
     }
@@ -125,6 +132,13 @@ public class ItemInfoDisplay : MonoBehaviour
         justOpened = true;
 
         Debug.Log($"ItemInfoDisplay: Panel activado, mostrando '{itemData.Name}'");
+
+        if (discardButton != null)
+        {
+            discardButton.gameObject.SetActive(true);
+            Debug.Log("ItemInfoDisplay: Botón descartar visible");
+        }
+
 
         PosicionarPanel(posicionMundo);
     }
@@ -227,4 +241,16 @@ public class ItemInfoDisplay : MonoBehaviour
             OcultarPanel();
         }
     }
+    private void OnDiscardButtonClicked()
+    {
+        Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar slot {currentSlotIndex}");
+
+        if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
+        {
+            ConfirmDiscardPanel.Instance.MostrarConfirmacion(currentSlotIndex);
+        }
+    }
+
+
+
 }

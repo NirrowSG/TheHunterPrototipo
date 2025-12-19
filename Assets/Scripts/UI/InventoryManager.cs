@@ -214,4 +214,27 @@ public class InventoryManager : MonoBehaviour
         ActualizarUI();
     }
 
+    public void DescartarItem(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= inventarioItems.Count)
+        {
+            Debug.LogWarning($"InventoryManager: Índice de slot inválido: {slotIndex}");
+            return;
+        }
+
+        InventoryItem item = inventarioItems[slotIndex];
+
+        if (item == null)
+        {
+            Debug.LogWarning("InventoryManager: No hay item para descartar en este slot");
+            return;
+        }
+
+        Debug.Log($"InventoryManager: Descartando {item.itemData.Name} x{item.cantidad} del slot {slotIndex}");
+
+        inventarioItems[slotIndex] = null;
+        ActualizarUI();
+    }
+
+
 }
