@@ -132,35 +132,68 @@ public class QuickInventorySlot : MonoBehaviour, IDropHandler
                     return;
                 }
 
+                if (QuickInventoryManager.Instance == null)
+                {
+                    Debug.LogError("QuickInventorySlot: QuickInventoryManager.Instance es null");
+                    return;
+                }
+
                 if (originalIndex < 0 || originalIndex >= InventoryManager.Instance.inventarioItems.Count)
                 {
                     Debug.LogError($"QuickInventorySlot: originalIndex {originalIndex} fuera de rango");
                     return;
                 }
 
-                InventoryItem item = InventoryManager.Instance.inventarioItems[originalIndex];
-
-                if (item != null)
+                if (targetIndex < 0 || targetIndex >= QuickInventoryManager.Instance.quickItems.Count)
                 {
-                    InventoryItem copiedItem = new InventoryItem(item.itemData, item.cantidad);
+                    Debug.LogError($"QuickInventorySlot: targetIndex {targetIndex} fuera de rango en QuickInventory");
+                    return;
+                }
 
-                    Debug.Log($"QuickInventorySlot: Agregando {copiedItem.itemData.Name} x{copiedItem.cantidad} en slot {targetIndex}");
+                InventoryItem inventoryItem = InventoryManager.Instance.inventarioItems[originalIndex];
+                InventoryItem quickItem = QuickInventoryManager.Instance.quickItems[targetIndex];
 
-                    if (QuickInventoryManager.Instance == null)
-                    {
-                        Debug.LogError("QuickInventorySlot: QuickInventoryManager.Instance es null");
-                        return;
-                    }
+                if (inventoryItem == null)
+                {
+                    Debug.LogWarning($"QuickInventorySlot: Item en inventario principal {originalIndex} es null");
+                    draggableItem.MarkAsDropped();
+                    return;
+                }
 
-                    QuickInventoryManager.Instance.AgregarItemEnSlot(copiedItem, targetIndex);
+                if (quickItem == null)
+                {
+                    Debug.Log($"QuickInventorySlot: Slot de destino vacío, moviendo {inventoryItem.itemData.Name}");
                     InventoryManager.Instance.inventarioItems[originalIndex] = null;
-                    InventoryManager.Instance.ActualizarUI();
+                    QuickInventoryManager.Instance.quickItems[targetIndex] = inventoryItem;
+                }
+                else if (inventoryItem.itemData == quickItem.itemData && inventoryItem.itemData.IsStackable)
+                {
+                    Debug.Log($"QuickInventorySlot: Items iguales y apilables, intentando apilar {inventoryItem.itemData.Name}");
+                    int maxStack = inventoryItem.itemData.MaxStackSize;
+                    int total = inventoryItem.cantidad + quickItem.cantidad;
+
+                    if (total <= maxStack)
+                    {
+                        quickItem.cantidad = total;
+                        InventoryManager.Instance.inventarioItems[originalIndex] = null;
+                        Debug.Log($"QuickInventorySlot: Apilado exitoso, total: {total}");
+                    }
+                    else
+                    {
+                        quickItem.cantidad = maxStack;
+                        inventoryItem.cantidad = total - maxStack;
+                        Debug.Log($"QuickInventorySlot: Stack lleno, quick: {maxStack}, inventario: {total - maxStack}");
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning($"QuickInventorySlot: Item en índice {originalIndex} es null");
+                    Debug.Log($"QuickInventorySlot: Intercambiando {inventoryItem.itemData.Name} <-> {quickItem.itemData.Name}");
+                    InventoryManager.Instance.inventarioItems[originalIndex] = quickItem;
+                    QuickInventoryManager.Instance.quickItems[targetIndex] = inventoryItem;
                 }
 
+                InventoryManager.Instance.ActualizarUI();
+                QuickInventoryManager.Instance.ActualizarUI();
                 draggableItem.MarkAsDropped();
             }
             else
