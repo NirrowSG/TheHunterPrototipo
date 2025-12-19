@@ -1,19 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 
 public class InventorySlot : MonoBehaviour, IDropHandler
 {
-    public Image iconoDisplay;
-    public TextMeshProUGUI textoCantidad;
     public GameObject itemPrefab;
 
     private InventoryItem slotItemActual;
     private GameObject currentItemObject;
     private int slotIndex;
 
-    private void Start()
+    private void Awake()
     {
         slotIndex = transform.GetSiblingIndex();
         Debug.Log($"InventorySlot: Slot inicializado en índice {slotIndex}");
@@ -55,16 +52,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             if (draggable != null)
             {
                 draggable.SetItemData(itemSlot.itemData, slotIndex);
-            }
-
-            if (itemSlot.cantidad > 1 && textoCantidad != null)
-            {
-                textoCantidad.text = itemSlot.cantidad.ToString();
-                textoCantidad.gameObject.SetActive(true);
-            }
-            else if (textoCantidad != null)
-            {
-                textoCantidad.gameObject.SetActive(false);
+                draggable.SetQuantity(itemSlot.cantidad);
+                draggable.isQuickSlot = false;
             }
         }
         else
@@ -81,16 +70,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         {
             Destroy(currentItemObject);
         }
-
-        if (textoCantidad != null)
-        {
-            textoCantidad.gameObject.SetActive(false);
-        }
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log($"InventorySlot [{slotIndex}]: OnDrop detectado!");
+        int targetIndex = transform.GetSiblingIndex();
+        Debug.Log($"InventorySlot [{targetIndex}]: OnDrop detectado!");
 
         GameObject droppedObject = eventData.pointerDrag;
         if (droppedObject == null)
@@ -113,24 +98,107 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             return;
         }
 
-        InventorySlot originalSlot = originalParent.GetComponent<InventorySlot>();
-        if (originalSlot == null)
+        bool wasFromQuickSlot = draggableItem.isQuickSlot;
+
+        if (wasFromQuickSlot)
         {
-            Debug.LogWarning("InventorySlot: El slot original no tiene componente InventorySlot");
-            return;
+            QuickInventorySlot originalSlot = originalParent.GetComponent<QuickInventorySlot>();
+            if (originalSlot != null)
+            {
+                int originalIndex = originalParent.GetSiblingIndex();
+                Debug.Log($"InventorySlot: Moviendo desde quick slot {originalIndex} a inventario principal slot {targetIndex}");
+
+                if (QuickInventoryManager.Instance == null)
+                {
+                    Debug.LogError("InventorySlot: QuickInventoryManager.Instance es null");
+                    return;
+                }
+
+                if (InventoryManager.Instance == null)
+                {
+                    Debug.LogError("InventorySlot: InventoryManager.Instance es null");
+                    return;
+                }
+
+                if (originalIndex < 0 || originalIndex >= QuickInventoryManager.Instance.quickItems.Count)
+                {
+                    Debug.LogError($"InventorySlot: originalIndex {originalIndex} fuera de rango en QuickInventory");
+                    return;
+                }
+
+                if (targetIndex < 0 || targetIndex >= InventoryManager.Instance.inventarioItems.Count)
+                {
+                    Debug.LogError($"InventorySlot: targetIndex {targetIndex} fuera de rango en InventoryManager");
+                    return;
+                }
+
+                InventoryItem quickItem = QuickInventoryManager.Instance.quickItems[originalIndex];
+                InventoryItem inventoryItem = InventoryManager.Instance.inventarioItems[targetIndex];
+
+                if (quickItem == null)
+                {
+                    Debug.LogWarning($"InventorySlot: Item en quick slot {originalIndex} es null");
+                    draggableItem.MarkAsDropped();
+                    return;
+                }
+
+                if (inventoryItem == null)
+                {
+                    Debug.Log($"InventorySlot: Slot de destino vacío, moviendo {quickItem.itemData.Name}");
+                    QuickInventoryManager.Instance.quickItems[originalIndex] = null;
+                    InventoryManager.Instance.inventarioItems[targetIndex] = quickItem;
+                }
+                else if (quickItem.itemData == inventoryItem.itemData && quickItem.itemData.IsStackable)
+                {
+                    Debug.Log($"InventorySlot: Items iguales y apilables, intentando apilar {quickItem.itemData.Name}");
+                    int maxStack = quickItem.itemData.MaxStackSize;
+                    int total = quickItem.cantidad + inventoryItem.cantidad;
+
+                    if (total <= maxStack)
+                    {
+                        inventoryItem.cantidad = total;
+                        QuickInventoryManager.Instance.quickItems[originalIndex] = null;
+                        Debug.Log($"InventorySlot: Apilado exitoso, total: {total}");
+                    }
+                    else
+                    {
+                        inventoryItem.cantidad = maxStack;
+                        quickItem.cantidad = total - maxStack;
+                        Debug.Log($"InventorySlot: Stack lleno, inventario: {maxStack}, quick: {total - maxStack}");
+                    }
+                }
+                else
+                {
+                    Debug.Log($"InventorySlot: Intercambiando {quickItem.itemData.Name} <-> {inventoryItem.itemData.Name}");
+                    QuickInventoryManager.Instance.quickItems[originalIndex] = inventoryItem;
+                    InventoryManager.Instance.inventarioItems[targetIndex] = quickItem;
+                }
+
+                QuickInventoryManager.Instance.ActualizarUI();
+                InventoryManager.Instance.ActualizarUI();
+                draggableItem.MarkAsDropped();
+            }
         }
-
-        int originalIndex = originalSlot.slotIndex;
-        int targetIndex = slotIndex;
-
-        Debug.Log($"InventorySlot: Intercambiando ítems - Desde slot {originalIndex} hacia slot {targetIndex}");
-
-        draggableItem.parentAfterDrag = transform;
-        draggableItem.MarkAsDropped();
-
-        if (InventoryManager.Instance != null)
+        else
         {
-            InventoryManager.Instance.IntercambiarItems(originalIndex, targetIndex);
+            InventorySlot originalSlot = originalParent.GetComponent<InventorySlot>();
+            if (originalSlot == null)
+            {
+                Debug.LogWarning("InventorySlot: El slot original no tiene componente InventorySlot");
+                return;
+            }
+
+            int originalIndex = originalSlot.slotIndex;
+
+            Debug.Log($"InventorySlot: Intercambiando ítems - Desde slot {originalIndex} hacia slot {targetIndex}");
+
+            draggableItem.parentAfterDrag = transform;
+            draggableItem.MarkAsDropped();
+
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.IntercambiarItems(originalIndex, targetIndex);
+            }
         }
     }
 }

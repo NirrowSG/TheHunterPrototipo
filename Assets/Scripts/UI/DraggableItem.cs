@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro; // Añadir este using
 
 [RequireComponent(typeof(CanvasGroup))]
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
@@ -8,6 +9,11 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public Transform parentAfterDrag;
     [HideInInspector] public ItemDataSO itemData;
     [HideInInspector] public int slotIndex;
+    [HideInInspector] public bool isQuickSlot = false;
+
+
+    [SerializeField] private TextMeshProUGUI quantityText;
+
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -24,6 +30,11 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (rootCanvas == null)
         {
             Debug.LogError("DraggableItem: No se encontró Canvas padre!");
+        }
+
+        if (quantityText == null)
+        {
+            quantityText = GetComponentInChildren<TextMeshProUGUI>();
         }
     }
 
@@ -98,8 +109,25 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         slotIndex = index;
     }
 
+    public void SetQuantity(int quantity)
+    {
+        if (quantityText != null)
+        {
+            if (quantity > 1)
+            {
+                quantityText.text = quantity.ToString();
+                quantityText.gameObject.SetActive(true);
+            }
+            else
+            {
+                quantityText.gameObject.SetActive(false);
+            }
+        }
+    }
+
     public void MarkAsDropped()
     {
         wasDropped = true;
     }
+
 }
