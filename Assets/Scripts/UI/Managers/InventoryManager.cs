@@ -17,7 +17,18 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        slots = slotsPadre.GetComponentsInChildren<InventorySlot>();
+        InicializarInventario();
+    }
+
+    private void InicializarInventario()
+    {
+        if (slotsPadre == null)
+        {
+            Debug.LogError("InventoryManager: slotsPadre no está asignado");
+            return;
+        }
+
+        slots = slotsPadre.GetComponentsInChildren<InventorySlot>(true);
         Debug.Log($"InventoryManager: Se encontraron {slots.Length} slots");
 
         while (inventarioItems.Count < slots.Length)
@@ -29,21 +40,33 @@ public class InventoryManager : MonoBehaviour
         ActualizarUI();
     }
 
+
     public void ActualizarUI()
     {
+        if (slots == null || slots.Length == 0)
+        {
+            Debug.LogWarning("InventoryManager: Slots no inicializados, intentando inicializar...");
+            InicializarInventario();
+            return;
+        }
+
         Debug.Log("InventoryManager: ActualizarUI llamado");
         for (int i = 0; i < slots.Length; i++)
         {
-            if (i < inventarioItems.Count)
+            if (slots[i] != null)
             {
-                slots[i].ActualizarSlot(inventarioItems[i]);
-            }
-            else
-            {
-                slots[i].LimpiarSlot();
+                if (i < inventarioItems.Count)
+                {
+                    slots[i].ActualizarSlot(inventarioItems[i]);
+                }
+                else
+                {
+                    slots[i].LimpiarSlot();
+                }
             }
         }
     }
+
 
     public void AgregarItem(ItemDataSO item, int cantidadAgregada)
     {
