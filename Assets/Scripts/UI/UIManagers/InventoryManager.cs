@@ -11,14 +11,32 @@ public class InventoryManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
-        Debug.Log("InventoryManager: Awake llamado");
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Debug.Log("InventoryManager: Instancia creada y marcada como persistente");
+        }
+        else if (Instance != this)
+        {
+            Debug.Log("InventoryManager: Instancia duplicada encontrada, destruyendo...");
+            Destroy(gameObject);
+            return;
+        }
     }
+
 
     void Start()
     {
         InicializarInventario();
+
+        if (GameDataManager.Instance != null && GameDataManager.Instance.GetSaveData().playerInventory.Count > 0)
+        {
+            CargarInventarioDeJugador();
+            Debug.Log("InventoryManager: Inventario cargado desde datos guardados");
+        }
     }
+
 
     private void InicializarInventario()
     {
@@ -145,9 +163,26 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
+        if (itemA.itemData == null)
+        {
+            Debug.LogError($"InventoryManager: itemA.itemData es null en slot {indexA}, eliminando item corrupto");
+            inventarioItems[indexA] = null;
+            ActualizarUI();
+            return;
+        }
+
         if (itemB == null)
         {
-            Debug.Log($"InventoryManager: Moviendo item de slot {indexA} a slot vacío {indexB}");
+            Debug.Log($"InventoryManager: Moviendo {itemA.itemData.Name} de slot {indexA} a slot vacío {indexB}");
+            inventarioItems[indexB] = itemA;
+            inventarioItems[indexA] = null;
+            ActualizarUI();
+            return;
+        }
+
+        if (itemB.itemData == null)
+        {
+            Debug.LogError($"InventoryManager: itemB.itemData es null en slot {indexB}, reemplazando con item válido");
             inventarioItems[indexB] = itemA;
             inventarioItems[indexA] = null;
             ActualizarUI();
@@ -176,13 +211,14 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"InventoryManager: Intercambiando items de slot {indexA} y slot {indexB}");
+            Debug.Log($"InventoryManager: Intercambiando {itemA.itemData.Name} (slot {indexA}) con {itemB.itemData.Name} (slot {indexB})");
             InventoryItem temp = inventarioItems[indexA];
             inventarioItems[indexA] = inventarioItems[indexB];
             inventarioItems[indexB] = temp;
         }
 
         ActualizarUI();
+        GuardarInventarioDeJugador();
     }
 
 
@@ -258,6 +294,76 @@ public class InventoryManager : MonoBehaviour
         inventarioItems[slotIndex] = null;
         ActualizarUI();
     }
+
+    public void GuardarInventarioDeJugador()
+    {
+        if (GameDataManager.Instance != null)
+        {
+            GameSaveData saveData = GameDataManager.Instance.GetSaveData();
+            saveData.playerInventory = GameDataManager.Instance.ConvertirASerializable(inventarioItems);
+            GameDataManager.Instance.GuardarDatos();
+            Debug.Log("InventoryManager: Inventario del jugador guardado");
+        }
+    }
+
+    public void CargarInventarioDeJugador()
+    {
+        if (GameDataManager.Instance != null)
+        {
+            GameSaveData saveData = GameDataManager.Instance.GetSaveData();
+            inventarioItems = GameDataManager.Instance.ConvertirAInventoryItems(saveData.playerInventory);
+
+            while (inventarioItems.Count < slots.Length)
+            {
+                inventarioItems.Add(null);
+            }
+
+            ActualizarUI();
+            Debug.Log($"InventoryManager: Inventario del jugador cargado");
+        }
+    }
+
+    public void TransferirTodoAlStash()
+    {
+        if (BaseStashManager.Instance == null)
+        {
+            Debug.LogWarning("InventoryManager: BaseStashManager no disponible");
+            return;
+        }
+
+        int itemsTransferidos = 0;
+
+        for (int i = 0; i < inventarioItems.Count; i++)
+        {
+            if (inventarioItems[i] != null)
+            {
+                bool exito = BaseStashManager.Instance.AgregarItemAlStash(
+                    inventarioItems[i].itemData,
+                    inventarioItems[i].cantidad
+                );
+
+                if (exito)
+                {
+                    inventarioItems[i] = null;
+                    itemsTransferidos++;
+                }
+            }
+        }
+
+        ActualizarUI();
+        Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al stash");
+    }
+
+    public void VaciarInventario()
+    {
+        for (int i = 0; i < inventarioItems.Count; i++)
+        {
+            inventarioItems[i] = null;
+        }
+        ActualizarUI();
+        GuardarInventarioDeJugador();
+    }
+
 
 
 }

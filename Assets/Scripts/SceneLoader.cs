@@ -6,13 +6,14 @@ public class SceneLoader : MonoBehaviour
 {
     [Header("Configuración")]
     public Button travelButton;
-    public string sceneToLoad = "SampleScene";
+    public string sceneToLoad;
+
 
     private void Start()
     {
         if (travelButton != null)
         {
-            travelButton.onClick.AddListener(CargarEscena);
+            travelButton.onClick.AddListener(LoadScene);
             Debug.Log("SceneLoader: Botón de viaje conectado");
         }
         else
@@ -21,29 +22,33 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    public void CargarEscena()
+    public void LoadScene()
     {
-        if (!string.IsNullOrEmpty(sceneToLoad))
+        if (string.IsNullOrEmpty(sceneToLoad))
         {
-            Debug.Log($"SceneLoader: Cargando escena {sceneToLoad}");
-            SceneManager.LoadScene(sceneToLoad);
+            Debug.LogWarning("SceneLoader: No se especificó escena para cargar");
+            return;
         }
-        else
+
+        if (InventoryManager.Instance != null)
         {
-            Debug.LogError("SceneLoader: No se especificó ninguna escena para cargar");
+            InventoryManager.Instance.GuardarInventarioDeJugador();
         }
+
+        Debug.Log($"SceneLoader: Cargando escena - {sceneToLoad}");
+        SceneManager.LoadScene(sceneToLoad);
     }
 
-    public void CargarEscenaPorNombre(string nombreEscena)
+    public void LoadSceneByIndex(int sceneIndex)
     {
-        if (!string.IsNullOrEmpty(nombreEscena))
+        if (InventoryManager.Instance != null)
         {
-            Debug.Log($"SceneLoader: Cargando escena {nombreEscena}");
-            SceneManager.LoadScene(nombreEscena);
+            InventoryManager.Instance.GuardarInventarioDeJugador();
         }
-        else
-        {
-            Debug.LogError("SceneLoader: Nombre de escena vacío");
-        }
+
+        Debug.Log($"SceneLoader: Cargando escena por índice - {sceneIndex}");
+        SceneManager.LoadScene(sceneIndex);
     }
 }
+
+
