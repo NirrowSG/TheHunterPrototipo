@@ -87,21 +87,42 @@ public class GameDataManager : MonoBehaviour
     {
         List<InventoryItem> items = new List<InventoryItem>();
 
+        Debug.Log($"GameDataManager: Convirtiendo {serializableItems.Count} items serializables...");
+
+        if (ItemDatabase.Instance == null)
+        {
+            Debug.LogError("GameDataManager: ItemDatabase.Instance es NULL!");
+            return items;
+        }
+
         foreach (var serItem in serializableItems)
         {
+            if (serItem == null || string.IsNullOrEmpty(serItem.itemID))
+            {
+                items.Add(null);
+                continue;
+            }
+
+            Debug.Log($"GameDataManager: Buscando item con ID: '{serItem.itemID}'");
             ItemDataSO itemData = ItemDatabase.Instance.GetItemByID(serItem.itemID);
+
             if (itemData != null)
             {
                 items.Add(new InventoryItem(itemData, serItem.cantidad));
+                Debug.Log($"GameDataManager: Item '{itemData.Name}' cargado exitosamente");
             }
             else
             {
-                Debug.LogWarning($"GameDataManager: No se pudo cargar item con ID {serItem.itemID}");
+                Debug.LogWarning($"GameDataManager: Item con ID '{serItem.itemID}' no encontrado en ItemDatabase, agregando slot vacío");
+                items.Add(null);
             }
         }
 
+        Debug.Log($"GameDataManager: Conversión completada - {items.Count} items en lista");
         return items;
     }
+
+
 
     public List<SerializableInventoryItem> ConvertirASerializable(List<InventoryItem> items)
     {

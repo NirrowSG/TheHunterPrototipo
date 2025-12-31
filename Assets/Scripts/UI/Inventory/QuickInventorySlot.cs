@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -14,13 +14,13 @@ public class QuickInventorySlot : MonoBehaviour, IDropHandler
     private void Awake()
     {
         slotIndex = transform.GetSiblingIndex();
-        Debug.Log($"QuickInventorySlot: Slot inicializado en �ndice {slotIndex}");
+        Debug.Log($"QuickInventorySlot: Slot inicializado en índice {slotIndex}");
     }
 
     private void OnTransformParentChanged()
     {
         slotIndex = transform.GetSiblingIndex();
-        Debug.Log($"QuickInventorySlot: �ndice actualizado a {slotIndex}");
+        Debug.Log($"QuickInventorySlot: Índice actualizado a {slotIndex}");
     }
 
     public void ActualizarSlot(InventoryItem itemSlot)
@@ -77,7 +77,7 @@ public class QuickInventorySlot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         int targetIndex = transform.GetSiblingIndex();
-        Debug.Log($"QuickInventorySlot: OnDrop detectado en �ndice {targetIndex}!");
+        Debug.Log($"QuickInventorySlot: OnDrop detectado en índice {targetIndex}!");
 
         GameObject droppedObject = eventData.pointerDrag;
         if (droppedObject == null)
@@ -190,13 +190,13 @@ public class QuickInventorySlot : MonoBehaviour, IDropHandler
 
             if (quickItem == null)
             {
-                Debug.Log($"QuickInventorySlot: Slot de destino vac�o, moviendo {inventoryItem.itemData.Name}");
+                Debug.Log($"QuickInventorySlot: Slot de destino vacío, moviendo {inventoryItem.itemData.Name}");
                 InventoryManager.Instance.inventarioItems[originalIndex] = null;
                 QuickInventoryManager.Instance.quickItems[targetIndex] = inventoryItem;
             }
             else if (quickItem.itemData == null)
             {
-                Debug.LogError($"QuickInventorySlot: quickItem.itemData es null en slot {targetIndex}");
+                Debug.LogWarning($"QuickInventorySlot: quickItem.itemData es null en slot {targetIndex}, reemplazando con item válido");
                 InventoryManager.Instance.inventarioItems[originalIndex] = null;
                 QuickInventoryManager.Instance.quickItems[targetIndex] = inventoryItem;
             }
@@ -227,11 +227,13 @@ public class QuickInventorySlot : MonoBehaviour, IDropHandler
             }
 
             InventoryManager.Instance.ActualizarUI();
+            InventoryManager.Instance.GuardarInventarioDeJugador();  // ✅ AÑADIDO: Guardar inventario principal
             QuickInventoryManager.Instance.ActualizarUI();
+            QuickInventoryManager.Instance.GuardarQuickInventory();  // ✅ MOVIDO: Guardar después de ActualizarUI
             draggableItem.MarkAsDropped();
-            QuickInventoryManager.Instance.GuardarQuickInventory();
         }
     }
+
 
 
 }

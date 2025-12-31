@@ -17,16 +17,17 @@ public class QuickInventoryManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-            Debug.Log("QuickInventoryManager: Instancia creada y marcada como persistente");
+            DontDestroyOnLoad(transform.root.gameObject);  // ← Cambio aquí (línea 20)
+            Debug.Log("QuickInventoryManager: Canvas raíz marcado como persistente");
         }
         else if (Instance != this)
         {
-            Debug.Log("QuickInventoryManager: Instancia duplicada encontrada, destruyendo...");
-            Destroy(gameObject);
+            Debug.Log("QuickInventoryManager: Instancia duplicada encontrada, destruyendo Canvas duplicado...");
+            Destroy(transform.root.gameObject);  // ← Cambio aquí (línea 26)
             return;
         }
     }
+
 
     private void OnEnable()
     {
@@ -42,6 +43,25 @@ public class QuickInventoryManager : MonoBehaviour
     {
         Debug.Log($"QuickInventoryManager: Escena {scene.name} cargada, reinicializando slots...");
         ReinicializarSlots();
+
+        if (GameDataManager.Instance != null)
+        {
+            GameSaveData saveData = GameDataManager.Instance.GetSaveData();
+
+            if (saveData != null && saveData.quickInventory != null && saveData.quickInventory.Count > 0)
+            {
+                Debug.Log("QuickInventoryManager: Recargando QuickInventory desde datos guardados tras cambio de escena...");
+                CargarQuickInventory();
+            }
+            else
+            {
+                Debug.Log("QuickInventoryManager: No hay datos de QuickInventory guardados, solo actualizando UI");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("QuickInventoryManager: GameDataManager no disponible aún");
+        }
     }
 
     void Start()
@@ -60,12 +80,11 @@ public class QuickInventoryManager : MonoBehaviour
         quickSlots = quickSlotsPadre.GetComponentsInChildren<QuickInventorySlot>(true);
         Debug.Log($"QuickInventoryManager: Se encontraron {quickSlots.Length} quick slots");
 
-        CargarQuickInventory(); // ← CAMBIO: Ahora carga desde disco
+        CargarQuickInventory();
 
         Debug.Log($"QuickInventoryManager: QuickInventory inicializado con {quickItems.Count} espacios");
         yaInicializado = true;
     }
-
 
     private void ReinicializarSlots()
     {
@@ -142,12 +161,31 @@ public class QuickInventoryManager : MonoBehaviour
             return;
         }
 
+        if (itemA.itemData == null)
+        {
+            Debug.LogError($"QuickInventoryManager: itemA.itemData es null en slot {indexA}, eliminando item corrupto");
+            quickItems[indexA] = null;
+            ActualizarUI();
+            return;
+        }
+
         if (itemB == null)
         {
             Debug.Log($"QuickInventoryManager: Moviendo item de slot {indexA} a slot vacío {indexB}");
             quickItems[indexB] = itemA;
             quickItems[indexA] = null;
             ActualizarUI();
+            GuardarQuickInventory();
+            return;
+        }
+
+        if (itemB.itemData == null)
+        {
+            Debug.LogError($"QuickInventoryManager: itemB.itemData es null en slot {indexB}, reemplazando con item válido");
+            quickItems[indexB] = itemA;
+            quickItems[indexA] = null;
+            ActualizarUI();
+            GuardarQuickInventory();
             return;
         }
 
@@ -234,9 +272,29 @@ public class QuickInventoryManager : MonoBehaviour
                 quickItems.Add(null);
             }
 
+            LimpiarItemsCorruptos();
             ActualizarUI();
             Debug.Log($"QuickInventoryManager: QuickInventory cargado - {quickItems.Count} slots");
         }
     }
 
+    private void LimpiarItemsCorruptos()
+    {
+        int itemsLimpiados = 0;
+        for (int i = 0; i < quickItems.Count; i++)
+        {
+            if (quickItems[i] != null && quickItems[i].itemData == null)
+            {
+                Debug.LogWarning($"QuickInventoryManager: Item corrupto encontrado en slot {i}, limpiando...");
+                quickItems[i] = null;
+                itemsLimpiados++;
+            }
+        }
+
+        if (itemsLimpiados > 0)
+        {
+            Debug.Log($"QuickInventoryManager: {itemsLimpiados} items corruptos limpiados");
+            GuardarQuickInventory();
+        }
+    }
 }

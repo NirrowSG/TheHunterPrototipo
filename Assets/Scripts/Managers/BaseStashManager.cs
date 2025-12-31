@@ -6,7 +6,7 @@ public class BaseStashManager : MonoBehaviour
     public static BaseStashManager Instance;
 
     private List<InventoryItem> stashItems = new List<InventoryItem>();
-    private const int MAX_STASH_SLOTS = 40;
+    private const int MAX_STASH_SLOTS = 75;
 
     private void Awake()
     {

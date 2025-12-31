@@ -5,6 +5,9 @@ public class TestInventory : MonoBehaviour
     public ItemDataSO maderaData;
     public ItemDataSO cuchilloData;
     public ItemDataSO metalData;
+    public ItemDataSO CascoData;
+    public ItemDataSO CamisetaData;
+    public ItemDataSO PistolaData;
 
     public void AgregarMadera()
     {
@@ -22,9 +25,33 @@ public class TestInventory : MonoBehaviour
         }
     }
 
+    public void AgregarCasco()
+    {
+        if (CascoData != null && InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.AgregarItem(CascoData, 1);
+        }
+    }
+
+    public void AgregarCamiseta()
+    {
+        if (CamisetaData != null && InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.AgregarItem(CamisetaData, 1);
+        }
+    }
+
     public void AgregarMetal()
     {
         if(metalData != null && InventoryManager.Instance != null)
         { InventoryManager.Instance.AgregarItem(metalData, 5); }
+    }
+
+    public void AgregarPistola()
+    {
+        if (PistolaData != null && InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.AgregarItem(PistolaData, 1);
+        }
     }
 }

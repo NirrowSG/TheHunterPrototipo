@@ -1,4 +1,5 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour
@@ -25,6 +26,42 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"InventoryManager: Escena {scene.name} cargada, reinicializando...");
+        ReinicializarSlots();
+
+        if (GameDataManager.Instance != null)
+        {
+            GameSaveData saveData = GameDataManager.Instance.GetSaveData();
+
+            if (saveData != null && saveData.playerInventory != null && saveData.playerInventory.Count > 0)
+            {
+                Debug.Log("InventoryManager: Recargando inventario desde datos guardados tras cambio de escena...");
+                CargarInventarioDeJugador();
+            }
+            else
+            {
+                Debug.Log("InventoryManager: No hay datos guardados, solo actualizando UI");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("InventoryManager: GameDataManager no disponible a√∫n");
+        }
+    }
+
+
 
     void Start()
     {
@@ -37,12 +74,31 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private void ReinicializarSlots()
+    {
+        if (slotsPadre == null)
+        {
+            Debug.LogWarning("InventoryManager: slotsPadre es null, buscando en escena...");
+            GameObject slotsContainer = GameObject.Find("SlotsContainer");
+            if (slotsContainer != null)
+            {
+                slotsPadre = slotsContainer.transform;
+            }
+        }
+
+        if (slotsPadre != null)
+        {
+            slots = slotsPadre.GetComponentsInChildren<InventorySlot>(true);
+            Debug.Log($"InventoryManager: Slots reinicializados - {slots.Length} slots encontrados");
+            ActualizarUI();
+        }
+    }
 
     private void InicializarInventario()
     {
         if (slotsPadre == null)
         {
-            Debug.LogError("InventoryManager: slotsPadre no est· asignado");
+            Debug.LogError("InventoryManager: slotsPadre no est√° asignado");
             return;
         }
 
@@ -58,13 +114,12 @@ public class InventoryManager : MonoBehaviour
         ActualizarUI();
     }
 
-
     public void ActualizarUI()
     {
         if (slots == null || slots.Length == 0)
         {
             Debug.LogWarning("InventoryManager: Slots no inicializados, intentando inicializar...");
-            InicializarInventario();
+            ReinicializarSlots();
             return;
         }
 
@@ -84,7 +139,6 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-
 
     public void AgregarItem(ItemDataSO item, int cantidadAgregada)
     {
@@ -115,11 +169,12 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("InventoryManager: No se encontrÛ item existente, creando nuevo");
+            Debug.Log("InventoryManager: No se encontr√≥ item existente, creando nuevo");
             AgregarNuevoItem(item, cantidadAgregada);
         }
 
         ActualizarUI();
+        GuardarInventarioDeJugador();
     }
 
     void AgregarNuevoItem(ItemDataSO item, int cantidad)
@@ -130,13 +185,13 @@ public class InventoryManager : MonoBehaviour
         {
             if (inventarioItems[i] == null)
             {
-                Debug.Log($"InventoryManager: Slot vacÌo encontrado en Ìndice {i}");
+                Debug.Log($"InventoryManager: Slot vac√≠o encontrado en √≠ndice {i}");
                 inventarioItems[i] = new InventoryItem(item, cantidad);
                 return;
             }
         }
 
-        Debug.LogWarning("InventoryManager: No hay slots vacÌos disponibles!");
+        Debug.LogWarning("InventoryManager: No hay slots vac√≠os disponibles!");
     }
 
     public void IntercambiarItems(int indexA, int indexB)
@@ -144,13 +199,13 @@ public class InventoryManager : MonoBehaviour
         if (indexA < 0 || indexA >= inventarioItems.Count ||
             indexB < 0 || indexB >= inventarioItems.Count)
         {
-            Debug.LogWarning("InventoryManager: Õndices fuera de rango");
+            Debug.LogWarning("InventoryManager: √çndices fuera de rango");
             return;
         }
 
         if (indexA == indexB)
         {
-            Debug.Log("InventoryManager: Mismo slot, no se realiza ninguna acciÛn");
+            Debug.Log("InventoryManager: Mismo slot, no se realiza ninguna acci√≥n");
             return;
         }
 
@@ -173,7 +228,7 @@ public class InventoryManager : MonoBehaviour
 
         if (itemB == null)
         {
-            Debug.Log($"InventoryManager: Moviendo {itemA.itemData.Name} de slot {indexA} a slot vacÌo {indexB}");
+            Debug.Log($"InventoryManager: Moviendo {itemA.itemData.Name} de slot {indexA} a slot vac√≠o {indexB}");
             inventarioItems[indexB] = itemA;
             inventarioItems[indexA] = null;
             ActualizarUI();
@@ -182,7 +237,7 @@ public class InventoryManager : MonoBehaviour
 
         if (itemB.itemData == null)
         {
-            Debug.LogError($"InventoryManager: itemB.itemData es null en slot {indexB}, reemplazando con item v·lido");
+            Debug.LogError($"InventoryManager: itemB.itemData es null en slot {indexB}, reemplazando con item v√°lido");
             inventarioItems[indexB] = itemA;
             inventarioItems[indexA] = null;
             ActualizarUI();
@@ -221,13 +276,11 @@ public class InventoryManager : MonoBehaviour
         GuardarInventarioDeJugador();
     }
 
-
-
     public void DividirItem(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= inventarioItems.Count)
         {
-            Debug.LogWarning($"InventoryManager: Õndice de slot inv·lido: {slotIndex}");
+            Debug.LogWarning($"InventoryManager: √çndice de slot inv√°lido: {slotIndex}");
             return;
         }
 
@@ -257,7 +310,7 @@ public class InventoryManager : MonoBehaviour
 
         if (slotVacioIndex == -1)
         {
-            Debug.LogWarning("InventoryManager: No hay slots vacÌos para dividir");
+            Debug.LogWarning("InventoryManager: No hay slots vac√≠os para dividir");
             return;
         }
 
@@ -277,7 +330,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (slotIndex < 0 || slotIndex >= inventarioItems.Count)
         {
-            Debug.LogWarning($"InventoryManager: Õndice de slot inv·lido: {slotIndex}");
+            Debug.LogWarning($"InventoryManager: √çndice de slot inv√°lido: {slotIndex}");
             return;
         }
 
@@ -293,6 +346,7 @@ public class InventoryManager : MonoBehaviour
 
         inventarioItems[slotIndex] = null;
         ActualizarUI();
+        GuardarInventarioDeJugador();
     }
 
     public void GuardarInventarioDeJugador()
@@ -318,8 +372,29 @@ public class InventoryManager : MonoBehaviour
                 inventarioItems.Add(null);
             }
 
+            LimpiarItemsCorruptos();
             ActualizarUI();
-            Debug.Log($"InventoryManager: Inventario del jugador cargado");
+            Debug.Log($"InventoryManager: Inventario del jugador cargado - {inventarioItems.Count} slots");
+        }
+    }
+
+    private void LimpiarItemsCorruptos()
+    {
+        int itemsLimpiados = 0;
+        for (int i = 0; i < inventarioItems.Count; i++)
+        {
+            if (inventarioItems[i] != null && inventarioItems[i].itemData == null)
+            {
+                Debug.LogWarning($"InventoryManager: Item corrupto encontrado en slot {i}, limpiando...");
+                inventarioItems[i] = null;
+                itemsLimpiados++;
+            }
+        }
+
+        if (itemsLimpiados > 0)
+        {
+            Debug.Log($"InventoryManager: {itemsLimpiados} items corruptos limpiados");
+            GuardarInventarioDeJugador();
         }
     }
 
@@ -351,6 +426,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         ActualizarUI();
+        GuardarInventarioDeJugador();
         Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al stash");
     }
 
@@ -363,7 +439,4 @@ public class InventoryManager : MonoBehaviour
         ActualizarUI();
         GuardarInventarioDeJugador();
     }
-
-
-
 }

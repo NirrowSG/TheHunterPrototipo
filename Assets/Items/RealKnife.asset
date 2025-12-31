@@ -9,18 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c13baef9cab17c643a79e96cad5ea942, type: 3}
-  m_Name: Cuchillo
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponDataSO
-  ID: CuchilloID
-  Name: Cuchillo
-  Description: Pa cortar
+  m_Script: {fileID: 11500000, guid: a59b3f8b2327e374d814c9b64dd45443, type: 3}
+  m_Name: RealKnife
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentItemSO
+  ID: RealKnifeID
+  Name: RealKnife
+  Description: Esto es un cuchillo
   Icon: {fileID: 21300000, guid: 8d1e09a27aba23c489f3c0d5e1eb72a3, type: 3}
   Type: 2
   IsStackable: 0
-  MaxStackSize: 99
-  Damage: 15
-  AttackRate: 1
-  Range: 1
-  ProjectilePrefab: {fileID: 0}
-  IsMelee: 1
+  MaxStackSize: 1
+  equipmentSlot: 5
+  statModifiers: []
+  isWeapon: 1
+  weaponDamage: 10
+  attackSpeed: 10
+  weaponRange: 10

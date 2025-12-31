@@ -19,8 +19,10 @@ public class SerializableInventoryItem
 public class GameSaveData
 {
     public List<SerializableInventoryItem> playerInventory = new List<SerializableInventoryItem>();
-    public List<SerializableInventoryItem> quickInventory = new List<SerializableInventoryItem>(); // ← AGREGAR ESTA LÍNEA
+    public List<SerializableInventoryItem> quickInventory = new List<SerializableInventoryItem>();
     public List<SerializableInventoryItem> baseStash = new List<SerializableInventoryItem>();
+    public List<SerializableEquipmentSlot> equipment = new List<SerializableEquipmentSlot>();
+    public SerializablePlayerStats playerStats;
     public int playerMoney = 0;
     public string lastScene = "PruebaInventario";
     public DateTime lastSaveTime;
@@ -28,9 +30,10 @@ public class GameSaveData
     public GameSaveData()
     {
         playerInventory = new List<SerializableInventoryItem>();
-        quickInventory = new List<SerializableInventoryItem>(); // ← AGREGAR ESTA LÍNEA
+        quickInventory = new List<SerializableInventoryItem>();
         baseStash = new List<SerializableInventoryItem>();
+        equipment = new List<SerializableEquipmentSlot>();
+        playerStats = new SerializablePlayerStats(new PlayerStats());
         lastSaveTime = DateTime.Now;
     }
 }
-
