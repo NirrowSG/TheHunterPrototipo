@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a608f646f699e40a6e208a971ace4e, type: 3}
+  m_Name: BosqueNormalEncounter
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterConfigSO
+  encounterName: Bosque Normal
+  possibleEnemies:
+  - enemyData: {fileID: 11400000, guid: cc0646bab10832647988bfa23907bd79, type: 2}
+    spawnWeight: 20
+  - enemyData: {fileID: 11400000, guid: ba4bc39a0cda6ad489069bf1b8b32426, type: 2}
+    spawnWeight: 20
+  - enemyData: {fileID: 11400000, guid: e5233d7a05af8af45b93b138e0cfcf62, type: 2}
+    spawnWeight: 20
+  minEncounters: 2
+  maxEncounters: 5
