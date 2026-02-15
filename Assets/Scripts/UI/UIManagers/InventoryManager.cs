@@ -397,7 +397,6 @@ public class InventoryManager : MonoBehaviour
             GuardarInventarioDeJugador();
         }
     }
-
     public void TransferirTodoAlStash()
     {
         if (BaseStashManager.Instance == null)
@@ -410,7 +409,7 @@ public class InventoryManager : MonoBehaviour
 
         for (int i = 0; i < inventarioItems.Count; i++)
         {
-            if (inventarioItems[i] != null)
+            if (inventarioItems[i] != null && inventarioItems[i].itemData != null)
             {
                 bool exito = BaseStashManager.Instance.AgregarItemAlStash(
                     inventarioItems[i].itemData,
@@ -427,8 +426,15 @@ public class InventoryManager : MonoBehaviour
 
         ActualizarUI();
         GuardarInventarioDeJugador();
-        Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al stash");
+
+        if (BaseStashUIManager.Instance != null)
+        {
+            BaseStashUIManager.Instance.UpdateAllCategories();
+        }
+
+        Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al almacenamiento");
     }
+
 
     public void VaciarInventario()
     {

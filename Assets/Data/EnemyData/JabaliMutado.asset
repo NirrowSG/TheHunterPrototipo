@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: JabaliMutado
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   enemyName: Jabali Mutado
-  sprite: {fileID: -2083817375886897733, guid: 3ec90f056432c174bbb940c85bb94306, type: 3}
+  sprite: {fileID: 5902646197509420572, guid: 3d852cea9bd871f4ea1f47438be6ddf6, type: 3}
   baseHealth: 90
   baseAttack: 5
   baseDefense: 2

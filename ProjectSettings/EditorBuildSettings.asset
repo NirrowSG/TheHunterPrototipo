@@ -9,25 +9,28 @@ EditorBuildSettings:
     path: Assets/Scenes/PruebaInventario.unity
     guid: 464daefd9d2f1e741a0d9b3e32a4ffaa
   - enabled: 1
+    path: Assets/Scenes/Historia/BosqueHistoria.unity
+    guid: 3f97a4a9d7da5214bba4a2bd447838e1
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/Mapas/MapaFarmeoBosque.unity
+    path: Assets/Scenes/MapasFarmeo/MapaFarmeoBosque.unity
     guid: 13cd1ed518293a34199b993f5389d13c
   - enabled: 1
-    path: Assets/Scenes/Mapas/Bosque/BosqueFarmear.unity
+    path: Assets/Scenes/MapasFarmeo/Bosque/BosqueFarmear.unity
     guid: 2e3689b4e6423fd429b4b03e1b6beee8
   - enabled: 1
-    path: Assets/Scenes/Mapas/Bosque/BosqueEvento.unity
+    path: Assets/Scenes/MapasFarmeo/Bosque/BosqueEvento.unity
     guid: 58015571af5268c40b8427ee2709c8e5
   - enabled: 1
-    path: Assets/Scenes/Mapas/Bosque/BosqueCombateElite.unity
+    path: Assets/Scenes/MapasFarmeo/Bosque/BosqueCombateElite.unity
     guid: 57858c8e524a614409f898d5570af185
   - enabled: 1
-    path: Assets/Scenes/Mapas/Bosque/BosqueCombate.unity
+    path: Assets/Scenes/MapasFarmeo/Bosque/BosqueCombate.unity
     guid: d5498654699765b4b9ed14ef4f8fbcee
   - enabled: 1
-    path: Assets/Scenes/Mapas/Bosque/BosqueTienda.unity
+    path: Assets/Scenes/MapasFarmeo/Bosque/BosqueTienda.unity
     guid: 507464a080adff746b8fc2649209375e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

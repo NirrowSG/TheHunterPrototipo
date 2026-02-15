@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro; // Añadir este using
+using TMPro;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
@@ -10,10 +10,9 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public ItemDataSO itemData;
     [HideInInspector] public int slotIndex;
     [HideInInspector] public bool isQuickSlot = false;
-
+    [HideInInspector] public bool isFromBaseStash = false;
 
     [SerializeField] private TextMeshProUGUI quantityText;
-
 
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -46,7 +45,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
             if (ItemInfoDisplay.Instance != null)
             {
-                ItemInfoDisplay.Instance.MostrarInfoItem(itemData, transform.position, slotIndex);
+                if (isFromBaseStash)
+                {
+                    ItemInfoDisplay.Instance.MostrarInfoItemDeBaseStash(itemData, transform.position, slotIndex);
+                }
+                else
+                {
+                    ItemInfoDisplay.Instance.MostrarInfoItem(itemData, transform.position, slotIndex);
+                }
             }
         }
     }
@@ -129,5 +135,4 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         wasDropped = true;
     }
-
 }

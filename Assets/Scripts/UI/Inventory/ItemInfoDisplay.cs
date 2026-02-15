@@ -23,6 +23,7 @@ public class ItemInfoDisplay : MonoBehaviour
     private bool justOpened = false;
     private ItemDataSO currentItemData;
     private int currentSlotIndex = -1;
+    private bool isFromBaseStash = false;
 
     private void Awake()
     {
@@ -81,7 +82,6 @@ public class ItemInfoDisplay : MonoBehaviour
             Debug.Log("ItemInfoDisplay: Botón descartar conectado");
         }
 
-
         Debug.Log($"ItemInfoDisplay: Referencias - Panel: {panelObject != null}, Name: {itemNameText != null}, Desc: {itemDescriptionText != null}");
     }
 
@@ -115,6 +115,7 @@ public class ItemInfoDisplay : MonoBehaviour
 
         currentItemData = itemData;
         currentSlotIndex = slotIndex;
+        isFromBaseStash = false;
 
         itemNameText.text = itemData.Name;
         itemDescriptionText.text = itemData.Description;
@@ -131,6 +132,12 @@ public class ItemInfoDisplay : MonoBehaviour
         isVisible = true;
         justOpened = true;
 
+        if (panelRectTransform != null)
+        {
+            panelRectTransform.SetAsLastSibling();
+            Debug.Log("ItemInfoDisplay: Panel movido al frente");
+        }
+
         Debug.Log($"ItemInfoDisplay: Panel activado, mostrando '{itemData.Name}'");
 
         if (discardButton != null)
@@ -139,6 +146,60 @@ public class ItemInfoDisplay : MonoBehaviour
             Debug.Log("ItemInfoDisplay: Botón descartar visible");
         }
 
+        PosicionarPanel(posicionMundo);
+    }
+
+    public void MostrarInfoItemDeBaseStash(ItemDataSO itemData, Vector3 posicionMundo, int stashIndex)
+    {
+        Debug.Log($"ItemInfoDisplay: MostrarInfoItem (BaseStash) llamado para {itemData?.Name} en índice {stashIndex}");
+
+        if (itemData == null)
+        {
+            Debug.LogWarning("ItemInfoDisplay: itemData es null");
+            return;
+        }
+
+        if (panelObject == null)
+        {
+            Debug.LogError("ItemInfoDisplay: panelObject es null");
+            return;
+        }
+
+        if (itemNameText == null || itemDescriptionText == null)
+        {
+            Debug.LogError("ItemInfoDisplay: Referencias de texto son null");
+            return;
+        }
+
+        currentItemData = itemData;
+        currentSlotIndex = stashIndex;
+        isFromBaseStash = true;
+
+        itemNameText.text = itemData.Name;
+        itemDescriptionText.text = itemData.Description;
+
+        if (splitButton != null)
+        {
+            splitButton.gameObject.SetActive(false);
+        }
+
+        panelObject.SetActive(true);
+        isVisible = true;
+        justOpened = true;
+
+        if (panelRectTransform != null)
+        {
+            panelRectTransform.SetAsLastSibling();
+            Debug.Log("ItemInfoDisplay: Panel movido al frente");
+        }
+
+        Debug.Log($"ItemInfoDisplay: Panel activado (BaseStash), mostrando '{itemData.Name}'");
+
+        if (discardButton != null)
+        {
+            discardButton.gameObject.SetActive(true);
+            Debug.Log("ItemInfoDisplay: Botón descartar visible");
+        }
 
         PosicionarPanel(posicionMundo);
     }
@@ -216,6 +277,7 @@ public class ItemInfoDisplay : MonoBehaviour
             isVisible = false;
             currentItemData = null;
             currentSlotIndex = -1;
+            isFromBaseStash = false;
             Debug.Log("ItemInfoDisplay: Panel ocultado");
         }
     }
@@ -241,16 +303,26 @@ public class ItemInfoDisplay : MonoBehaviour
             OcultarPanel();
         }
     }
+
     private void OnDiscardButtonClicked()
     {
-        Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar slot {currentSlotIndex}");
-
-        if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
+        if (isFromBaseStash)
         {
-            ConfirmDiscardPanel.Instance.MostrarConfirmacion(currentSlotIndex);
+            Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar del BaseStash índice {currentSlotIndex}");
+
+            if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
+            {
+                ConfirmDiscardPanel.Instance.MostrarConfirmacionBaseStash(currentSlotIndex);
+            }
+        }
+        else
+        {
+            Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar slot {currentSlotIndex}");
+
+            if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
+            {
+                ConfirmDiscardPanel.Instance.MostrarConfirmacion(currentSlotIndex);
+            }
         }
     }
-
-
-
 }

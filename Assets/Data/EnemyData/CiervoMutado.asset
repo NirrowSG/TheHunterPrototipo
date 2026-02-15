@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CiervoMutado
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   enemyName: Ciervo Mutado
-  sprite: {fileID: 706189217739135535, guid: e21cc491bf4865f4898e0ee4aed43fb2, type: 3}
+  sprite: {fileID: 21300000, guid: d21c9986020fcfd4094b4f4d4a687041, type: 3}
   baseHealth: 70
   baseAttack: 3
   baseDefense: 5

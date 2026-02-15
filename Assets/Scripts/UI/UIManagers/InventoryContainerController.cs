@@ -28,6 +28,10 @@ public class InventoryContainerController : MonoBehaviour
     [Tooltip("Mantener panel de navegación activo siempre (excepto cuando se cierre manualmente)")]
     public bool mantenePanelNavegacionActivo = false;
 
+    [Header("Controles de Juego")]
+    [Tooltip("Joystick que se desactivará cuando el inventario esté abierto")]
+    public GameObject joystick;
+
     private GameObject panelActual;
     private Dictionary<string, GameObject> panelesDiccionario;
     private bool panelNavegacionCerradoManualmente = false;
@@ -84,6 +88,8 @@ public class InventoryContainerController : MonoBehaviour
             panelNavegacionPermanente.SetActive(panelNavegacionActivoAlIniciar);
             panelNavegacionCerradoManualmente = !panelNavegacionActivoAlIniciar;
 
+            ActualizarEstadoJoystick();
+
             Debug.Log($"InventoryContainerController: Panel de navegación {(panelNavegacionActivoAlIniciar ? "activado" : "desactivado")} al inicio");
         }
     }
@@ -93,7 +99,18 @@ public class InventoryContainerController : MonoBehaviour
         if (panelNavegacionPermanente != null && !panelNavegacionPermanente.activeSelf && !panelNavegacionCerradoManualmente)
         {
             panelNavegacionPermanente.SetActive(true);
+            ActualizarEstadoJoystick();
             Debug.Log("InventoryContainerController: Panel de navegación permanente activado");
+        }
+    }
+
+    private void ActualizarEstadoJoystick()
+    {
+        if (joystick != null)
+        {
+            bool panelNavegacionActivo = panelNavegacionPermanente != null && panelNavegacionPermanente.activeSelf;
+            joystick.SetActive(!panelNavegacionActivo);
+            Debug.Log($"InventoryContainerController: Joystick {(panelNavegacionActivo ? "desactivado" : "activado")}");
         }
     }
 
@@ -110,6 +127,8 @@ public class InventoryContainerController : MonoBehaviour
         panelNavegacionPermanente.SetActive(!estaActivo);
         panelNavegacionCerradoManualmente = estaActivo;
 
+        ActualizarEstadoJoystick();
+
         Debug.Log($"InventoryContainerController: Panel de navegación {(!estaActivo ? "abierto" : "cerrado")}");
     }
 
@@ -119,6 +138,7 @@ public class InventoryContainerController : MonoBehaviour
         {
             panelNavegacionPermanente.SetActive(true);
             panelNavegacionCerradoManualmente = false;
+            ActualizarEstadoJoystick();
             Debug.Log("InventoryContainerController: Panel de navegación mostrado");
         }
     }
@@ -129,6 +149,7 @@ public class InventoryContainerController : MonoBehaviour
         {
             panelNavegacionPermanente.SetActive(false);
             panelNavegacionCerradoManualmente = true;
+            ActualizarEstadoJoystick();
             Debug.Log("InventoryContainerController: Panel de navegación ocultado");
         }
     }

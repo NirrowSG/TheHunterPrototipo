@@ -13,6 +13,8 @@ public class ConfirmDiscardPanel : MonoBehaviour
     public Button noButton;
 
     private int slotToDiscard = -1;
+    private bool isFromBaseStash = false;
+    private RectTransform panelRectTransform;
 
     private void Awake()
     {
@@ -24,6 +26,11 @@ public class ConfirmDiscardPanel : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+
+        if (panelObject != null)
+        {
+            panelRectTransform = panelObject.GetComponent<RectTransform>();
         }
     }
 
@@ -45,22 +52,64 @@ public class ConfirmDiscardPanel : MonoBehaviour
     public void MostrarConfirmacion(int slotIndex)
     {
         slotToDiscard = slotIndex;
+        isFromBaseStash = false;
 
         if (panelObject != null)
         {
             panelObject.SetActive(true);
+
+            if (panelRectTransform != null)
+            {
+                panelRectTransform.SetAsLastSibling();
+                Debug.Log("ConfirmDiscardPanel: Panel movido al frente");
+            }
         }
 
         Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para slot {slotIndex}");
+    }
+
+    public void MostrarConfirmacionBaseStash(int stashIndex)
+    {
+        slotToDiscard = stashIndex;
+        isFromBaseStash = true;
+
+        if (panelObject != null)
+        {
+            panelObject.SetActive(true);
+
+            if (panelRectTransform != null)
+            {
+                panelRectTransform.SetAsLastSibling();
+                Debug.Log("ConfirmDiscardPanel: Panel movido al frente (BaseStash)");
+            }
+        }
+
+        Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para BaseStash índice {stashIndex}");
     }
 
     private void OnYesClicked()
     {
         Debug.Log("ConfirmDiscardPanel: Usuario confirmó descarte");
 
-        if (InventoryManager.Instance != null && slotToDiscard >= 0)
+        if (isFromBaseStash)
         {
-            InventoryManager.Instance.DescartarItem(slotToDiscard);
+            if (BaseStashManager.Instance != null && slotToDiscard >= 0)
+            {
+                BaseStashManager.Instance.RemoverItemDelStash(slotToDiscard);
+                Debug.Log($"ConfirmDiscardPanel: Item removido del BaseStash en índice {slotToDiscard}");
+
+                if (BaseStashUIManager.Instance != null)
+                {
+                    BaseStashUIManager.Instance.UpdateAllCategories();
+                }
+            }
+        }
+        else
+        {
+            if (InventoryManager.Instance != null && slotToDiscard >= 0)
+            {
+                InventoryManager.Instance.DescartarItem(slotToDiscard);
+            }
         }
 
         OcultarPanel();
@@ -85,5 +134,6 @@ public class ConfirmDiscardPanel : MonoBehaviour
         }
 
         slotToDiscard = -1;
+        isFromBaseStash = false;
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LoboMutado
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   enemyName: Lobo Mutado
-  sprite: {fileID: 21300000, guid: e2cbd4b3d1493c349a92fd63de2ef4c4, type: 3}
+  sprite: {fileID: 3841415696134705259, guid: 47e331f00c7213040a1d790083d7930f, type: 3}
   baseHealth: 50
   baseAttack: 5
   baseDefense: 3

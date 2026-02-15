@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.IO;
 using System.Collections.Generic;
 
@@ -25,9 +26,24 @@ public class GameDataManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
         CargarDatos();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"GameDataManager: Escena '{scene.name}' cargada, restaurando datos");
     }
 
     public void CargarDatos()
@@ -121,8 +137,6 @@ public class GameDataManager : MonoBehaviour
         Debug.Log($"GameDataManager: Conversión completada - {items.Count} items en lista");
         return items;
     }
-
-
 
     public List<SerializableInventoryItem> ConvertirASerializable(List<InventoryItem> items)
     {
