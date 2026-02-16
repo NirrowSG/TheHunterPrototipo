@@ -9,48 +9,57 @@ public class BaseStashItemSlot : MonoBehaviour, IDropHandler
 
     private InventoryItem currentItem;
     private GameObject currentItemObject;
-    private int globalStashIndex = -1;  // NUEVO: Índice global en el stash
+    private DraggableItem currentDraggableItem;
+    private Image currentItemImage;
+    private int globalStashIndex = -1;
 
     public void UpdateSlot(InventoryItem item)
     {
         UpdateSlot(item, -1);
     }
 
-    // NUEVO: Versión que acepta el índice del stash
     public void UpdateSlot(InventoryItem item, int stashIndex)
     {
         currentItem = item;
         globalStashIndex = stashIndex;
 
-        if (currentItemObject != null)
-        {
-            Destroy(currentItemObject);
-        }
-
         if (item != null && item.itemData != null)
         {
-            if (itemPrefab == null)
+            // OPTIMIZACIÓN: Crear el objeto solo una vez y reutilizarlo
+            if (currentItemObject == null)
             {
-                Debug.LogError("BaseStashItemSlot: itemPrefab no asignado");
-                return;
+                if (itemPrefab == null)
+                {
+                    Debug.LogError("BaseStashItemSlot: itemPrefab no asignado");
+                    return;
+                }
+
+                currentItemObject = Instantiate(itemPrefab, transform);
+                currentItemObject.transform.localPosition = Vector3.zero;
+                currentDraggableItem = currentItemObject.GetComponent<DraggableItem>();
+                currentItemImage = currentItemObject.GetComponent<Image>();
             }
 
-            currentItemObject = Instantiate(itemPrefab, transform);
-            currentItemObject.transform.localPosition = Vector3.zero;
-
-            Image itemIcon = currentItemObject.GetComponent<Image>();
-            if (itemIcon != null)
+            // Actualizar los datos del item existente
+            if (currentItemImage != null && item.itemData.Icon != null)
             {
-                itemIcon.sprite = item.itemData.Icon;
+                currentItemImage.sprite = item.itemData.Icon;
+                currentItemImage.enabled = true;
             }
 
-            DraggableItem draggable = currentItemObject.GetComponent<DraggableItem>();
-            if (draggable != null)
+            if (currentDraggableItem != null)
             {
-                draggable.SetItemData(item.itemData, stashIndex);
-                draggable.SetQuantity(item.cantidad);
-                draggable.isFromBaseStash = true;  // NUEVO: Marcar como del BaseStash
+                currentDraggableItem.SetItemData(item.itemData, stashIndex);
+                currentDraggableItem.SetQuantity(item.cantidad);
+                currentDraggableItem.isFromBaseStash = true;
             }
+
+            currentItemObject.SetActive(true);
+        }
+        else
+        {
+            // OPTIMIZACIÓN: Desactivar en lugar de destruir
+            ClearSlot();
         }
     }
 
@@ -59,9 +68,10 @@ public class BaseStashItemSlot : MonoBehaviour, IDropHandler
         currentItem = null;
         globalStashIndex = -1;
 
+        // OPTIMIZACIÓN: Desactivar en lugar de destruir
         if (currentItemObject != null)
         {
-            Destroy(currentItemObject);
+            currentItemObject.SetActive(false);
         }
     }
 

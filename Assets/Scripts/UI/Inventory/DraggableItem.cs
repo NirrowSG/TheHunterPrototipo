@@ -41,7 +41,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         if (!isDragging && itemData != null)
         {
-            Debug.Log($"DraggableItem: Click detectado en {itemData.Name} (slot {slotIndex})");
+            ////Debug.Log($"DraggableItem: Click detectado en {itemData.Name} (slot {slotIndex})");
 
             if (ItemInfoDisplay.Instance != null)
             {
@@ -61,7 +61,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         isDragging = true;
         wasDropped = false;
-        Debug.Log($"DraggableItem: OnBeginDrag - Iniciando arrastre desde slot {slotIndex}");
+        //Debug.Log($"DraggableItem: OnBeginDrag - Iniciando arrastre desde slot {slotIndex}");
 
         if (ItemInfoDisplay.Instance != null)
         {
@@ -91,7 +91,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
-        Debug.Log($"DraggableItem: OnEndDrag - Finalizando arrastre (wasDropped: {wasDropped})");
+        //Debug.Log($"DraggableItem: OnEndDrag - Finalizando arrastre (wasDropped: {wasDropped})");
 
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
@@ -101,7 +101,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (!wasDropped)
         {
-            Debug.Log("DraggableItem: No se soltó en ningún slot, actualizando UI");
+            //Debug.Log("DraggableItem: No se soltó en ningún slot, actualizando UI");
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.ActualizarUI();

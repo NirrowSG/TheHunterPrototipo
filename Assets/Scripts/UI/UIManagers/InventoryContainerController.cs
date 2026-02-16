@@ -78,7 +78,7 @@ public class InventoryContainerController : MonoBehaviour
             MostrarPanel(panelPorDefecto);
         }
 
-        Debug.Log($"InventoryContainerController: {panelesDiccionario.Count} paneles alternables inicializados");
+        //Debug.Log($"InventoryContainerController: {panelesDiccionario.Count} paneles alternables inicializados");
     }
 
     private void EstablecerEstadoInicialPanelNavegacion()
@@ -90,7 +90,7 @@ public class InventoryContainerController : MonoBehaviour
 
             ActualizarEstadoJoystick();
 
-            Debug.Log($"InventoryContainerController: Panel de navegación {(panelNavegacionActivoAlIniciar ? "activado" : "desactivado")} al inicio");
+            //Debug.Log($"InventoryContainerController: Panel de navegación {(panelNavegacionActivoAlIniciar ? "activado" : "desactivado")} al inicio");
         }
     }
 
@@ -100,7 +100,7 @@ public class InventoryContainerController : MonoBehaviour
         {
             panelNavegacionPermanente.SetActive(true);
             ActualizarEstadoJoystick();
-            Debug.Log("InventoryContainerController: Panel de navegación permanente activado");
+            //Debug.Log("InventoryContainerController: Panel de navegación permanente activado");
         }
     }
 
@@ -110,7 +110,7 @@ public class InventoryContainerController : MonoBehaviour
         {
             bool panelNavegacionActivo = panelNavegacionPermanente != null && panelNavegacionPermanente.activeSelf;
             joystick.SetActive(!panelNavegacionActivo);
-            Debug.Log($"InventoryContainerController: Joystick {(panelNavegacionActivo ? "desactivado" : "activado")}");
+            //Debug.Log($"InventoryContainerController: Joystick {(panelNavegacionActivo ? "desactivado" : "activado")}");
         }
     }
 
@@ -118,7 +118,7 @@ public class InventoryContainerController : MonoBehaviour
     {
         if (panelNavegacionPermanente == null)
         {
-            Debug.LogWarning("InventoryContainerController: No hay panel de navegación configurado");
+            //Debug.LogWarning("InventoryContainerController: No hay panel de navegación configurado");
             return;
         }
 
@@ -129,7 +129,7 @@ public class InventoryContainerController : MonoBehaviour
 
         ActualizarEstadoJoystick();
 
-        Debug.Log($"InventoryContainerController: Panel de navegación {(!estaActivo ? "abierto" : "cerrado")}");
+        //Debug.Log($"InventoryContainerController: Panel de navegación {(!estaActivo ? "abierto" : "cerrado")}");
     }
 
     public void MostrarPanelNavegacion()
@@ -139,7 +139,7 @@ public class InventoryContainerController : MonoBehaviour
             panelNavegacionPermanente.SetActive(true);
             panelNavegacionCerradoManualmente = false;
             ActualizarEstadoJoystick();
-            Debug.Log("InventoryContainerController: Panel de navegación mostrado");
+            //Debug.Log("InventoryContainerController: Panel de navegación mostrado");
         }
     }
 
@@ -150,7 +150,7 @@ public class InventoryContainerController : MonoBehaviour
             panelNavegacionPermanente.SetActive(false);
             panelNavegacionCerradoManualmente = true;
             ActualizarEstadoJoystick();
-            Debug.Log("InventoryContainerController: Panel de navegación ocultado");
+            //Debug.Log("InventoryContainerController: Panel de navegación ocultado");
         }
     }
 
@@ -206,7 +206,7 @@ public class InventoryContainerController : MonoBehaviour
             AsegurarPanelNavegacionActivo();
         }
 
-        Debug.Log($"InventoryContainerController: Panel '{panel.name}' mostrado");
+        //Debug.Log($"InventoryContainerController: Panel '{panel.name}' mostrado");
     }
 
     public void MostrarPanelPorNombre(string nombrePanel)
@@ -251,7 +251,7 @@ public class InventoryContainerController : MonoBehaviour
         if (panelActual != null)
         {
             panelActual.SetActive(false);
-            Debug.Log($"InventoryContainerController: Panel '{panelActual.name}' cerrado");
+            //Debug.Log($"InventoryContainerController: Panel '{panelActual.name}' cerrado");
             panelActual = null;
         }
 
@@ -270,7 +270,7 @@ public class InventoryContainerController : MonoBehaviour
 
         CerrarTodosPaneles();
         panelNavegacionCerradoManualmente = false;
-        Debug.Log("InventoryContainerController: Inventario completo cerrado");
+        //Debug.Log("InventoryContainerController: Inventario completo cerrado");
     }
 
     public bool HayPanelAbierto()

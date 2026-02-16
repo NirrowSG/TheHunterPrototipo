@@ -27,7 +27,7 @@ public class ItemInfoDisplay : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("ItemInfoDisplay: Awake llamado");
+        //Debug.Log("ItemInfoDisplay: Awake llamado");
 
         if (Instance == null)
         {
@@ -56,44 +56,44 @@ public class ItemInfoDisplay : MonoBehaviour
         if (canvas == null)
         {
             canvas = GetComponentInParent<Canvas>();
-            Debug.Log($"ItemInfoDisplay: Canvas encontrado: {canvas != null}");
+            //Debug.Log($"ItemInfoDisplay: Canvas encontrado: {canvas != null}");
         }
 
         if (panelRectTransform == null && panelObject != null)
         {
             panelRectTransform = panelObject.GetComponent<RectTransform>();
-            Debug.Log($"ItemInfoDisplay: PanelRectTransform asignado: {panelRectTransform != null}");
+            //Debug.Log($"ItemInfoDisplay: PanelRectTransform asignado: {panelRectTransform != null}");
         }
 
         if (panelRectTransform == null)
         {
             panelRectTransform = GetComponent<RectTransform>();
-            Debug.Log("ItemInfoDisplay: Usando RectTransform propio");
+            //Debug.Log("ItemInfoDisplay: Usando RectTransform propio");
         }
 
         if (splitButton != null)
         {
             splitButton.onClick.AddListener(OnSplitButtonClicked);
-            Debug.Log("ItemInfoDisplay: Botón dividir conectado");
+            //Debug.Log("ItemInfoDisplay: Botón dividir conectado");
         }
         if (discardButton != null)
         {
             discardButton.onClick.AddListener(OnDiscardButtonClicked);
-            Debug.Log("ItemInfoDisplay: Botón descartar conectado");
+            //Debug.Log("ItemInfoDisplay: Botón descartar conectado");
         }
 
-        Debug.Log($"ItemInfoDisplay: Referencias - Panel: {panelObject != null}, Name: {itemNameText != null}, Desc: {itemDescriptionText != null}");
+        //Debug.Log($"ItemInfoDisplay: Referencias - Panel: {panelObject != null}, Name: {itemNameText != null}, Desc: {itemDescriptionText != null}");
     }
 
     private void Start()
     {
-        Debug.Log("ItemInfoDisplay: Start llamado");
+        //Debug.Log("ItemInfoDisplay: Start llamado");
         OcultarPanel();
     }
 
     public void MostrarInfoItem(ItemDataSO itemData, Vector3 posicionMundo, int slotIndex)
     {
-        Debug.Log($"ItemInfoDisplay: MostrarInfoItem llamado para {itemData?.Name} en slot {slotIndex}");
+        //Debug.Log($"ItemInfoDisplay: MostrarInfoItem llamado para {itemData?.Name} en slot {slotIndex}");
 
         if (itemData == null)
         {
@@ -125,7 +125,7 @@ public class ItemInfoDisplay : MonoBehaviour
             InventoryItem item = InventoryManager.Instance?.inventarioItems[slotIndex];
             bool canSplit = item != null && itemData.IsStackable && item.cantidad > 1;
             splitButton.gameObject.SetActive(canSplit);
-            Debug.Log($"ItemInfoDisplay: Botón dividir {(canSplit ? "visible" : "oculto")} (cantidad: {item?.cantidad})");
+            //Debug.Log($"ItemInfoDisplay: Botón dividir {(canSplit ? "visible" : "oculto")} (cantidad: {item?.cantidad})");
         }
 
         panelObject.SetActive(true);
@@ -135,15 +135,15 @@ public class ItemInfoDisplay : MonoBehaviour
         if (panelRectTransform != null)
         {
             panelRectTransform.SetAsLastSibling();
-            Debug.Log("ItemInfoDisplay: Panel movido al frente");
+            //Debug.Log("ItemInfoDisplay: Panel movido al frente");
         }
 
-        Debug.Log($"ItemInfoDisplay: Panel activado, mostrando '{itemData.Name}'");
+        //Debug.Log($"ItemInfoDisplay: Panel activado, mostrando '{itemData.Name}'");
 
         if (discardButton != null)
         {
             discardButton.gameObject.SetActive(true);
-            Debug.Log("ItemInfoDisplay: Botón descartar visible");
+            //Debug.Log("ItemInfoDisplay: Botón descartar visible");
         }
 
         PosicionarPanel(posicionMundo);
@@ -151,7 +151,7 @@ public class ItemInfoDisplay : MonoBehaviour
 
     public void MostrarInfoItemDeBaseStash(ItemDataSO itemData, Vector3 posicionMundo, int stashIndex)
     {
-        Debug.Log($"ItemInfoDisplay: MostrarInfoItem (BaseStash) llamado para {itemData?.Name} en índice {stashIndex}");
+        //Debug.Log($"ItemInfoDisplay: MostrarInfoItem (BaseStash) llamado para {itemData?.Name} en índice {stashIndex}");
 
         if (itemData == null)
         {
@@ -190,15 +190,15 @@ public class ItemInfoDisplay : MonoBehaviour
         if (panelRectTransform != null)
         {
             panelRectTransform.SetAsLastSibling();
-            Debug.Log("ItemInfoDisplay: Panel movido al frente");
+            //Debug.Log("ItemInfoDisplay: Panel movido al frente");
         }
 
-        Debug.Log($"ItemInfoDisplay: Panel activado (BaseStash), mostrando '{itemData.Name}'");
+        //Debug.Log($"ItemInfoDisplay: Panel activado (BaseStash), mostrando '{itemData.Name}'");
 
         if (discardButton != null)
         {
             discardButton.gameObject.SetActive(true);
-            Debug.Log("ItemInfoDisplay: Botón descartar visible");
+            //Debug.Log("ItemInfoDisplay: Botón descartar visible");
         }
 
         PosicionarPanel(posicionMundo);
@@ -206,7 +206,7 @@ public class ItemInfoDisplay : MonoBehaviour
 
     private void OnSplitButtonClicked()
     {
-        Debug.Log($"ItemInfoDisplay: Dividir item en slot {currentSlotIndex}");
+        //Debug.Log($"ItemInfoDisplay: Dividir item en slot {currentSlotIndex}");
 
         if (InventoryManager.Instance != null && currentSlotIndex >= 0)
         {
@@ -278,7 +278,7 @@ public class ItemInfoDisplay : MonoBehaviour
             currentItemData = null;
             currentSlotIndex = -1;
             isFromBaseStash = false;
-            Debug.Log("ItemInfoDisplay: Panel ocultado");
+            //Debug.Log("ItemInfoDisplay: Panel ocultado");
         }
     }
 
@@ -299,7 +299,7 @@ public class ItemInfoDisplay : MonoBehaviour
                 return;
             }
 
-            Debug.Log("ItemInfoDisplay: Click detectado, cerrando panel");
+            //Debug.Log("ItemInfoDisplay: Click detectado, cerrando panel");
             OcultarPanel();
         }
     }
@@ -308,7 +308,7 @@ public class ItemInfoDisplay : MonoBehaviour
     {
         if (isFromBaseStash)
         {
-            Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar del BaseStash índice {currentSlotIndex}");
+            //Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar del BaseStash índice {currentSlotIndex}");
 
             if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
             {
@@ -317,7 +317,7 @@ public class ItemInfoDisplay : MonoBehaviour
         }
         else
         {
-            Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar slot {currentSlotIndex}");
+            //Debug.Log($"ItemInfoDisplay: Solicitando confirmación para descartar slot {currentSlotIndex}");
 
             if (ConfirmDiscardPanel.Instance != null && currentSlotIndex >= 0)
             {

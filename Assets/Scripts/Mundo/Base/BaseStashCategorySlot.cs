@@ -53,7 +53,7 @@ public class BaseStashCategorySlot : MonoBehaviour
             }
         }
 
-        Debug.Log($"BaseStashCategorySlot [{category}]: {itemSlots.Count} slots inicializados");
+        ////Debug.Log($"BaseStashCategorySlot [{category}]: {itemSlots.Count} slots inicializados");
     }
 
     private void UpdateCategoryName()
@@ -80,29 +80,61 @@ public class BaseStashCategorySlot : MonoBehaviour
 
     public void ToggleExpand()
     {
-        isExpanded = !isExpanded;
+        if (isExpanded)
+        {
+            Collapse();
+        }
+        else
+        {
+            Expand();
+        }
+    }
+
+    public void Expand()
+    {
+        if (isExpanded) return;
+
+        isExpanded = true;
 
         if (expandedPanel != null)
         {
-            expandedPanel.SetActive(isExpanded);
+            expandedPanel.SetActive(true);
         }
 
-        Debug.Log($"BaseStashCategorySlot [{category}]: {(isExpanded ? "Expandido" : "Contraído")}");
+        if (BaseStashUIManager.Instance != null)
+        {
+            BaseStashUIManager.Instance.OnCategoryExpanded(this);
+        }
+
+        ////Debug.Log($"BaseStashCategorySlot [{category}]: Expandido");
+    }
+
+    public void Collapse()
+    {
+        if (!isExpanded) return;
+
+        isExpanded = false;
+
+        if (expandedPanel != null)
+        {
+            expandedPanel.SetActive(false);
+        }
+
+        ////Debug.Log($"BaseStashCategorySlot [{category}]: Contraído");
     }
 
     public void UpdateCategory(List<InventoryItem> allItems)
     {
-        Debug.Log($"=== BaseStashCategorySlot [{category}]: UpdateCategory llamado ===");
-        Debug.Log($"Total items recibidos: {allItems.Count}");
+        ////Debug.Log($"=== BaseStashCategorySlot [{category}]: UpdateCategory llamado ===");
+        ////Debug.Log($"Total items recibidos: {allItems.Count}");
 
-        // Crear lista de pares (item, índice global)
         List<(InventoryItem item, int globalIndex)> categoryItemsWithIndex = new List<(InventoryItem, int)>();
 
         for (int i = 0; i < allItems.Count; i++)
         {
             if (allItems[i] != null && allItems[i].itemData != null)
             {
-                Debug.Log($"Item {i}: {allItems[i].itemData.Name} | Type: {allItems[i].itemData.Type} | Clase: {allItems[i].itemData.GetType().Name}");
+                ////Debug.Log($"Item {i}: {allItems[i].itemData.Name} | Type: {allItems[i].itemData.Type} | Clase: {allItems[i].itemData.GetType().Name}");
 
                 if (allItems[i].itemData.Type == category)
                 {
@@ -111,12 +143,11 @@ public class BaseStashCategorySlot : MonoBehaviour
             }
         }
 
-        Debug.Log($"Items filtrados para [{category}]: {categoryItemsWithIndex.Count}");
+        ////Debug.Log($"Items filtrados para [{category}]: {categoryItemsWithIndex.Count}");
 
-        // Mostrar items filtrados
         foreach (var (item, index) in categoryItemsWithIndex)
         {
-            Debug.Log($"  - {item.itemData.Name} (Type: {item.itemData.Type}, Global Index: {index})");
+            ////Debug.Log($"  - {item.itemData.Name} (Type: {item.itemData.Type}, Global Index: {index})");
         }
 
         if (itemCountText != null)
@@ -124,14 +155,14 @@ public class BaseStashCategorySlot : MonoBehaviour
             itemCountText.text = categoryItemsWithIndex.Count.ToString();
         }
 
-        Debug.Log($"Slots disponibles: {itemSlots.Count}");
+        ////Debug.Log($"Slots disponibles: {itemSlots.Count}");
 
         for (int i = 0; i < itemSlots.Count; i++)
         {
             if (i < categoryItemsWithIndex.Count)
             {
                 var (item, globalIndex) = categoryItemsWithIndex[i];
-                Debug.Log($"Actualizando slot {i} con {item.itemData.Name} (índice global: {globalIndex})");
+                ////Debug.Log($"Actualizando slot {i} con {item.itemData.Name} (índice global: {globalIndex})");
                 itemSlots[i].UpdateSlot(item, globalIndex);
             }
             else
@@ -140,6 +171,6 @@ public class BaseStashCategorySlot : MonoBehaviour
             }
         }
 
-        Debug.Log($"=== BaseStashCategorySlot [{category}]: Actualización completada ===");
+        ////Debug.Log($"=== BaseStashCategorySlot [{category}]: Actualización completada ===");
     }
 }

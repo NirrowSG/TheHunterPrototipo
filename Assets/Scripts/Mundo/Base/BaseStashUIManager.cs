@@ -43,7 +43,7 @@ public class BaseStashUIManager : MonoBehaviour
             if (joystick != null)
             {
                 joystick.SetActive(false);
-                Debug.Log("BaseStashUIManager: Joystick desactivado");
+                //Debug.Log("BaseStashUIManager: Joystick desactivado");
             }
         }
     }
@@ -57,10 +57,19 @@ public class BaseStashUIManager : MonoBehaviour
             if (joystick != null)
             {
                 joystick.SetActive(true);
-                Debug.Log("BaseStashUIManager: Joystick activado");
+                //Debug.Log("BaseStashUIManager: Joystick activado");
+            }
+
+            // NUEVO: Notificar al BaseStashInteractable que el panel se cerró
+            BaseStashInteractable interactable = FindObjectOfType<BaseStashInteractable>();
+            if (interactable != null)
+            {
+                interactable.OnStashClosed();
+                //Debug.Log("BaseStashUIManager: BaseStashInteractable notificado del cierre");
             }
         }
     }
+
 
     public void UpdateAllCategories()
     {
@@ -80,7 +89,20 @@ public class BaseStashUIManager : MonoBehaviour
             }
         }
 
-        Debug.Log("BaseStashUIManager: Todas las categorías actualizadas");
+        //Debug.Log("BaseStashUIManager: Todas las categorías actualizadas");
+    }
+
+    public void OnCategoryExpanded(BaseStashCategorySlot expandedCategory)
+    {
+        //Debug.Log($"BaseStashUIManager: Categoría {expandedCategory.category} expandida, cerrando las demás");
+
+        foreach (var categorySlot in categorySlots)
+        {
+            if (categorySlot != null && categorySlot != expandedCategory)
+            {
+                categorySlot.Collapse();
+            }
+        }
     }
 
     public void TransferItemToStash(DraggableItem draggableItem)
@@ -117,7 +139,7 @@ public class BaseStashUIManager : MonoBehaviour
                 InventoryManager.Instance.ActualizarUI();
                 InventoryManager.Instance.GuardarInventarioDeJugador();
                 UpdateAllCategories();
-                Debug.Log($"BaseStashUIManager: {item.itemData.Name} transferido al stash");
+                //Debug.Log($"BaseStashUIManager: {item.itemData.Name} transferido al stash");
             }
         }
     }
@@ -140,7 +162,7 @@ public class BaseStashUIManager : MonoBehaviour
                 QuickInventoryManager.Instance.ActualizarUI();
                 QuickInventoryManager.Instance.GuardarQuickInventory();
                 UpdateAllCategories();
-                Debug.Log($"BaseStashUIManager: {item.itemData.Name} transferido al stash desde quick inventory");
+                //Debug.Log($"BaseStashUIManager: {item.itemData.Name} transferido al stash desde quick inventory");
             }
         }
     }

@@ -36,7 +36,7 @@ public class BaseStashInteractable : MonoBehaviour
         if (player != null)
         {
             playerTransform = player.transform;
-            Debug.Log("BaseStashInteractable: Player encontrado");
+            //Debug.Log("BaseStashInteractable: Player encontrado");
         }
         else
         {
@@ -93,7 +93,7 @@ public class BaseStashInteractable : MonoBehaviour
         }
 
         BaseStashUIManager.Instance.OpenStashUI();
-        Debug.Log("BaseStashInteractable: Almacenamiento abierto");
+        //Debug.Log("BaseStashInteractable: Almacenamiento abierto");
     }
 
     private void CloseStash()
@@ -106,7 +106,7 @@ public class BaseStashInteractable : MonoBehaviour
         }
 
         BaseStashUIManager.Instance.CloseStashUI();
-        Debug.Log("BaseStashInteractable: Almacenamiento cerrado");
+        //Debug.Log("BaseStashInteractable: Almacenamiento cerrado");
     }
 
     public void OnStashClosed()

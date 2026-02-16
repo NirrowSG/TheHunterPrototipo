@@ -16,11 +16,11 @@ public class InventoryManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            Debug.Log("InventoryManager: Instancia creada y marcada como persistente");
+            //Debug.Log("InventoryManager: Instancia creada y marcada como persistente");
         }
         else if (Instance != this)
         {
-            Debug.Log("InventoryManager: Instancia duplicada encontrada, destruyendo...");
+            //Debug.Log("InventoryManager: Instancia duplicada encontrada, destruyendo...");
             Destroy(gameObject);
             return;
         }
@@ -38,7 +38,7 @@ public class InventoryManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"InventoryManager: Escena {scene.name} cargada, reinicializando...");
+        //Debug.Log($"InventoryManager: Escena {scene.name} cargada, reinicializando...");
         ReinicializarSlots();
 
         if (GameDataManager.Instance != null)
@@ -47,12 +47,12 @@ public class InventoryManager : MonoBehaviour
 
             if (saveData != null && saveData.playerInventory != null && saveData.playerInventory.Count > 0)
             {
-                Debug.Log("InventoryManager: Recargando inventario desde datos guardados tras cambio de escena...");
+                //Debug.Log("InventoryManager: Recargando inventario desde datos guardados tras cambio de escena...");
                 CargarInventarioDeJugador();
             }
             else
             {
-                Debug.Log("InventoryManager: No hay datos guardados, solo actualizando UI");
+                //Debug.Log("InventoryManager: No hay datos guardados, solo actualizando UI");
             }
         }
         else
@@ -70,7 +70,7 @@ public class InventoryManager : MonoBehaviour
         if (GameDataManager.Instance != null && GameDataManager.Instance.GetSaveData().playerInventory.Count > 0)
         {
             CargarInventarioDeJugador();
-            Debug.Log("InventoryManager: Inventario cargado desde datos guardados");
+            //Debug.Log("InventoryManager: Inventario cargado desde datos guardados");
         }
     }
 
@@ -78,7 +78,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (slotsPadre == null)
         {
-            Debug.LogWarning("InventoryManager: slotsPadre es null, buscando en escena...");
+            //Debug.LogWarning("InventoryManager: slotsPadre es null, buscando en escena...");
             GameObject slotsContainer = GameObject.Find("SlotsContainer");
             if (slotsContainer != null)
             {
@@ -89,7 +89,7 @@ public class InventoryManager : MonoBehaviour
         if (slotsPadre != null)
         {
             slots = slotsPadre.GetComponentsInChildren<InventorySlot>(true);
-            Debug.Log($"InventoryManager: Slots reinicializados - {slots.Length} slots encontrados");
+            //Debug.Log($"InventoryManager: Slots reinicializados - {slots.Length} slots encontrados");
             ActualizarUI();
         }
     }
@@ -98,19 +98,19 @@ public class InventoryManager : MonoBehaviour
     {
         if (slotsPadre == null)
         {
-            Debug.LogError("InventoryManager: slotsPadre no está asignado");
+            //Debug.LogError("InventoryManager: slotsPadre no está asignado");
             return;
         }
 
         slots = slotsPadre.GetComponentsInChildren<InventorySlot>(true);
-        Debug.Log($"InventoryManager: Se encontraron {slots.Length} slots");
+        //Debug.Log($"InventoryManager: Se encontraron {slots.Length} slots");
 
         while (inventarioItems.Count < slots.Length)
         {
             inventarioItems.Add(null);
         }
 
-        Debug.Log($"InventoryManager: Lista inicializada con {inventarioItems.Count} espacios");
+        //Debug.Log($"InventoryManager: Lista inicializada con {inventarioItems.Count} espacios");
         ActualizarUI();
     }
 
@@ -118,12 +118,12 @@ public class InventoryManager : MonoBehaviour
     {
         if (slots == null || slots.Length == 0)
         {
-            Debug.LogWarning("InventoryManager: Slots no inicializados, intentando inicializar...");
+            //Debug.LogWarning("InventoryManager: Slots no inicializados, intentando inicializar...");
             ReinicializarSlots();
             return;
         }
 
-        Debug.Log("InventoryManager: ActualizarUI llamado");
+        //Debug.Log("InventoryManager: ActualizarUI llamado");
         for (int i = 0; i < slots.Length; i++)
         {
             if (slots[i] != null)
@@ -142,7 +142,7 @@ public class InventoryManager : MonoBehaviour
 
     public void AgregarItem(ItemDataSO item, int cantidadAgregada)
     {
-        Debug.Log($"InventoryManager: Intentando agregar {cantidadAgregada}x {item.Name}");
+        //Debug.Log($"InventoryManager: Intentando agregar {cantidadAgregada}x {item.Name}");
 
         InventoryItem itemExistente = inventarioItems.Find(x =>
             x != null &&
@@ -152,13 +152,13 @@ public class InventoryManager : MonoBehaviour
 
         if (itemExistente != null)
         {
-            Debug.Log($"InventoryManager: Item existente encontrado, cantidad actual: {itemExistente.cantidad}");
+            //Debug.Log($"InventoryManager: Item existente encontrado, cantidad actual: {itemExistente.cantidad}");
             int total = itemExistente.cantidad + cantidadAgregada;
 
             if (total <= 99)
             {
                 itemExistente.AumentarCantidad(cantidadAgregada);
-                Debug.Log($"InventoryManager: Cantidad aumentada a {itemExistente.cantidad}");
+                //Debug.Log($"InventoryManager: Cantidad aumentada a {itemExistente.cantidad}");
             }
             else
             {
@@ -169,7 +169,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("InventoryManager: No se encontró item existente, creando nuevo");
+            //Debug.Log("InventoryManager: No se encontró item existente, creando nuevo");
             AgregarNuevoItem(item, cantidadAgregada);
         }
 
@@ -179,13 +179,13 @@ public class InventoryManager : MonoBehaviour
 
     void AgregarNuevoItem(ItemDataSO item, int cantidad)
     {
-        Debug.Log($"InventoryManager: AgregarNuevoItem - {item.Name} x{cantidad}");
+        //Debug.Log($"InventoryManager: AgregarNuevoItem - {item.Name} x{cantidad}");
 
         for (int i = 0; i < inventarioItems.Count; i++)
         {
             if (inventarioItems[i] == null)
             {
-                Debug.Log($"InventoryManager: Slot vacío encontrado en índice {i}");
+                //Debug.Log($"InventoryManager: Slot vacío encontrado en índice {i}");
                 inventarioItems[i] = new InventoryItem(item, cantidad);
                 return;
             }
@@ -205,7 +205,7 @@ public class InventoryManager : MonoBehaviour
 
         if (indexA == indexB)
         {
-            Debug.Log("InventoryManager: Mismo slot, no se realiza ninguna acción");
+            //Debug.Log("InventoryManager: Mismo slot, no se realiza ninguna acción");
             return;
         }
 
@@ -228,7 +228,7 @@ public class InventoryManager : MonoBehaviour
 
         if (itemB == null)
         {
-            Debug.Log($"InventoryManager: Moviendo {itemA.itemData.Name} de slot {indexA} a slot vacío {indexB}");
+            //Debug.Log($"InventoryManager: Moviendo {itemA.itemData.Name} de slot {indexA} a slot vacío {indexB}");
             inventarioItems[indexB] = itemA;
             inventarioItems[indexA] = null;
             ActualizarUI();
@@ -246,7 +246,7 @@ public class InventoryManager : MonoBehaviour
 
         if (itemA.itemData == itemB.itemData && itemA.itemData.IsStackable)
         {
-            Debug.Log($"InventoryManager: Intentando apilar {itemA.itemData.Name} - {itemA.cantidad} + {itemB.cantidad}");
+            //Debug.Log($"InventoryManager: Intentando apilar {itemA.itemData.Name} - {itemA.cantidad} + {itemB.cantidad}");
 
             int maxStack = itemA.itemData.MaxStackSize;
             int total = itemA.cantidad + itemB.cantidad;
@@ -255,18 +255,18 @@ public class InventoryManager : MonoBehaviour
             {
                 itemB.cantidad = total;
                 inventarioItems[indexA] = null;
-                Debug.Log($"InventoryManager: Stack completo - Total: {total}");
+                //Debug.Log($"InventoryManager: Stack completo - Total: {total}");
             }
             else
             {
                 itemB.cantidad = maxStack;
                 itemA.cantidad = total - maxStack;
-                Debug.Log($"InventoryManager: Stack parcial - Destino: {maxStack}, Origen restante: {itemA.cantidad}");
+                //Debug.Log($"InventoryManager: Stack parcial - Destino: {maxStack}, Origen restante: {itemA.cantidad}");
             }
         }
         else
         {
-            Debug.Log($"InventoryManager: Intercambiando {itemA.itemData.Name} (slot {indexA}) con {itemB.itemData.Name} (slot {indexB})");
+            //Debug.Log($"InventoryManager: Intercambiando {itemA.itemData.Name} (slot {indexA}) con {itemB.itemData.Name} (slot {indexB})");
             InventoryItem temp = inventarioItems[indexA];
             inventarioItems[indexA] = inventarioItems[indexB];
             inventarioItems[indexB] = temp;
@@ -321,7 +321,7 @@ public class InventoryManager : MonoBehaviour
         itemOriginal.cantidad = restante;
         inventarioItems[slotVacioIndex] = new InventoryItem(itemOriginal.itemData, mitad);
 
-        Debug.Log($"InventoryManager: Item dividido - Slot {slotIndex}: {restante}, Slot {slotVacioIndex}: {mitad}");
+        //Debug.Log($"InventoryManager: Item dividido - Slot {slotIndex}: {restante}, Slot {slotVacioIndex}: {mitad}");
 
         ActualizarUI();
     }
@@ -342,7 +342,7 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"InventoryManager: Descartando {item.itemData.Name} x{item.cantidad} del slot {slotIndex}");
+        //Debug.Log($"InventoryManager: Descartando {item.itemData.Name} x{item.cantidad} del slot {slotIndex}");
 
         inventarioItems[slotIndex] = null;
         ActualizarUI();
@@ -356,7 +356,7 @@ public class InventoryManager : MonoBehaviour
             GameSaveData saveData = GameDataManager.Instance.GetSaveData();
             saveData.playerInventory = GameDataManager.Instance.ConvertirASerializable(inventarioItems);
             GameDataManager.Instance.GuardarDatos();
-            Debug.Log("InventoryManager: Inventario del jugador guardado");
+            //Debug.Log("InventoryManager: Inventario del jugador guardado");
         }
     }
 
@@ -374,7 +374,7 @@ public class InventoryManager : MonoBehaviour
 
             LimpiarItemsCorruptos();
             ActualizarUI();
-            Debug.Log($"InventoryManager: Inventario del jugador cargado - {inventarioItems.Count} slots");
+            //Debug.Log($"InventoryManager: Inventario del jugador cargado - {inventarioItems.Count} slots");
         }
     }
 
@@ -393,7 +393,7 @@ public class InventoryManager : MonoBehaviour
 
         if (itemsLimpiados > 0)
         {
-            Debug.Log($"InventoryManager: {itemsLimpiados} items corruptos limpiados");
+            //Debug.Log($"InventoryManager: {itemsLimpiados} items corruptos limpiados");
             GuardarInventarioDeJugador();
         }
     }
@@ -432,7 +432,7 @@ public class InventoryManager : MonoBehaviour
             BaseStashUIManager.Instance.UpdateAllCategories();
         }
 
-        Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al almacenamiento");
+        //Debug.Log($"InventoryManager: {itemsTransferidos} items transferidos al almacenamiento");
     }
 
 

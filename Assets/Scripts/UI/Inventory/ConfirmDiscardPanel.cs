@@ -61,11 +61,11 @@ public class ConfirmDiscardPanel : MonoBehaviour
             if (panelRectTransform != null)
             {
                 panelRectTransform.SetAsLastSibling();
-                Debug.Log("ConfirmDiscardPanel: Panel movido al frente");
+                ////Debug.Log("ConfirmDiscardPanel: Panel movido al frente");
             }
         }
 
-        Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para slot {slotIndex}");
+        //Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para slot {slotIndex}");
     }
 
     public void MostrarConfirmacionBaseStash(int stashIndex)
@@ -80,23 +80,23 @@ public class ConfirmDiscardPanel : MonoBehaviour
             if (panelRectTransform != null)
             {
                 panelRectTransform.SetAsLastSibling();
-                Debug.Log("ConfirmDiscardPanel: Panel movido al frente (BaseStash)");
+                //Debug.Log("ConfirmDiscardPanel: Panel movido al frente (BaseStash)");
             }
         }
 
-        Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para BaseStash índice {stashIndex}");
+        //Debug.Log($"ConfirmDiscardPanel: Mostrando confirmación para BaseStash índice {stashIndex}");
     }
 
     private void OnYesClicked()
     {
-        Debug.Log("ConfirmDiscardPanel: Usuario confirmó descarte");
+        //Debug.Log("ConfirmDiscardPanel: Usuario confirmó descarte");
 
         if (isFromBaseStash)
         {
             if (BaseStashManager.Instance != null && slotToDiscard >= 0)
             {
                 BaseStashManager.Instance.RemoverItemDelStash(slotToDiscard);
-                Debug.Log($"ConfirmDiscardPanel: Item removido del BaseStash en índice {slotToDiscard}");
+                //Debug.Log($"ConfirmDiscardPanel: Item removido del BaseStash en índice {slotToDiscard}");
 
                 if (BaseStashUIManager.Instance != null)
                 {
@@ -122,7 +122,7 @@ public class ConfirmDiscardPanel : MonoBehaviour
 
     private void OnNoClicked()
     {
-        Debug.Log("ConfirmDiscardPanel: Usuario canceló descarte");
+        //Debug.Log("ConfirmDiscardPanel: Usuario canceló descarte");
         OcultarPanel();
     }
 
